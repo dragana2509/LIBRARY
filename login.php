@@ -15,7 +15,7 @@
 		} else{
 			$err1 .="Username is required!<br>";
 		}
-
+		
 		if(!empty($_POST['pass']) && empty($err1)){
 			$qAccount = "SELECT * FROM `users` WHERE `username`= :username AND `password`=:pass";
 			$statement = $conn->prepare($qAccount);
@@ -26,7 +26,8 @@
 				//ne postoji greska vrsi se prijava
 				$user = $statement->fetch();
 				$_SESSION['id'] = $user['id'];
-				if($user['username'] =="admin"){
+				$_SESSION['username'] = $user['username'];
+				if($user['username'] == "admin"){
 					header("Location:admin.php");
 				} else{
 					header("Location:home.php");

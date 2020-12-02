@@ -4,64 +4,70 @@
 ?>
 <hr>
 <?php
-	$q = "SELECT id, Title, Rented, Number_of_copies FROM books ";
+	$q = "SELECT id, Title FROM books ";
 	$stmt = $conn->prepare($q);
 	$stmt->execute();
 	$books = $stmt->fetchAll();
 	
     if(isset($_POST['submit'])){
     	$id_book = $_POST['cbx_books'];
-		$q = "SELECT id, Title, Publisher, Rented, Number_of_copies FROM books WHERE id=$id_book";
+		$q = "SELECT id, Title, Publisher_id, Number_of_copies FROM books WHERE id=:id_book"; 
+		$qData = [
+			":id_book"=>$id_book
+		];
 		$stmt = $conn->prepare($q);
-		$stmt->execute();
-		$books_table = $stmt->fetchAll(PDO::FETCH_OBJ);
+		$stmt->execute($qData);
+		$bookInfo = $stmt->fetch(PDO::FETCH_OBJ);
 
-		$q2 = "SELECT id, Book_title ,Publisher, Rented FROM users WHERE id=$id_user";
+		$q2 = "SELECT SUM(number_rented_books) AS `total_rented` FROM `rent` WHERE `book_id`=:id_book";
 		$stmt1=$conn->prepare($q2);
-		$stmt1->execute();
-		$user1 = $stmt1->fetchAll(PDO::FETCH_OBJ);
-		foreach ($user1 as $p) {
-		 	$rented = $p->Rented;		 	
-		};
-
-		if($rented >0){
+		$stmt1->execute(array(
+			":id_book"=>$id_book
+		));
+		$resultRented = $stmt1->fetch();
+		$alreadyRented = $resultRented[0];
+		
+		if($alreadyRented > $bookInfo->Number_of_copies){
 			echo "You can't rent new books until you return the rented books!";
 		} else{
-			$number_books = $_POST['number_books'];
-			foreach ($books_table as $p){
-				$number_of_copies = $p->Number_of_copies;
-				$rented = $p->Rented;
-				$title = $p->Title;
-				$publisher = $p->Publisher;
-			};
-		
-		if($number_books > $number_of_copies){
-			echo " There are not enough avaliabe books";
-		} else{
-		$q1 = " UPDATE books
-							SET `Rented` =:rented,
-							    `Number_of_copies` =:number_of_copies
-							WHERE id = $id_book"; 
-		$parameters =[
-			':rented' => ($rented + $number_books),
-			':number_of_copies'=>($number_of_copies - $number_books)
-		];
-		$statement = $conn->prepare($q1);
-		$statement->execute($parameters);
+			$newBooksToRent = $_POST['number_books'];
+			
+			if($newBooksToRent > $bookInfo->Number_of_copies - $alreadyRented){
+				echo " There are not enough avaliabe books";
 
-		$q3 = " UPDATE users
-							SET `Rented` =:rented,
-							    `Book_title` =:book_title,
-							    `Publisher` =:publisher
-							WHERE id = $id_user"; 
-		$parameters1 =[
-			':rented'=>$number_books,
-			':book_title'=>$title,
-			':publisher'=>$publisher
-		];
-		$statement1 = $conn->prepare($q3);
-		$statement1->execute($parameters1);
-
+			} else{
+				$q1 = "SELECT `number_rented_books` FROM `rent` WHERE `user_id`= :user_id AND `book_id`=:book_id";
+				$statement = $conn->prepare($q1);
+				$statement->execute(array(
+					":user_id"=>$id_user,
+					":book_id"=>$id_book
+				)); 
+				$result = $statement->fetch(PDO::FETCH_OBJ);
+				
+				
+				if($result != false){
+					$query = "UPDATE rent SET `number_rented_books` =:new_rent_number
+										WHERE `user_id`= :user_id 
+										AND `book_id`=:book_id";
+										$statement = $conn->prepare($query);
+						$statement->execute(array(
+									":new_rent_number"=>$newBooksToRent + $result->number_rented_books,
+									":user_id"=>$id_user,
+									":book_id"=>$id_book
+								));
+				} else{
+					$query = "INSERT INTO rent SET 
+										`number_rented_books` =:new_rent_number,
+										`user_id`= :user_id,
+										`book_id`=:book_id";
+					$statement = $conn->prepare($query);
+					$statement->execute(array(
+								":new_rent_number"=>$newBooksToRent,
+								":user_id"=>$id_user,
+								":book_id"=>$id_book
+					));
+				}
+				echo "Rented successfully!";
 		}
 	}
 }	

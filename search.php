@@ -8,7 +8,7 @@ require_once("header.php");
 		<form method="post" action="home.php?action=search">
 			<label>
 				<select name="column">
-					<option value="select" >Select all</option>
+					<option value="select">Select all</option>
 					<option value="Title" >By title</option>
 					<option value="Author">By author</option>
 					<option value="Publisher">By publisher</option>
@@ -28,15 +28,20 @@ require_once("header.php");
 	<?php
 		if(isset($_POST['search_book'])){
 			$column = $_POST['column'];
-			if($column=="select"){
+			if($column == "select"){
 				echo "You must select type of search!";
 			} else{
-			$key_word = $_POST['key_word'];
-			$query = "SELECT * FROM `books` WHERE ".$column." LIKE :search_word";
-			$statement = $conn->prepare($query);
-			$data =['search_word'=>'%'.$key_word.'%'];
-			$statement->execute($data);
-
+				
+				$key_word = $_POST['key_word'];
+				$query = "SELECT * FROM `books` b 
+						JOIN publisher p ON b.Publisher_id=p.id_publisher
+						WHERE ".$column." LIKE :search_word"
+						;
+				
+				$statement = $conn->prepare($query);
+				$data =['search_word'=>'%'.$key_word.'%'];
+				$statement->execute($data);
+				
 		if($statement->rowCount()>0){
 	?>
 			<table border="1">
@@ -48,7 +53,6 @@ require_once("header.php");
 				<th>Genre</th>
 				<th>ISBN</th>
 				<th>Number of pages</th>
-				<th>Number of borrowed books</th>
 				<th>Number of copies in library</th>
 			</tr>
 		<?php
@@ -62,20 +66,16 @@ require_once("header.php");
 					<td><?php echo $row['Genre'] ?></td>
 					<td><?php echo $row['ISBN'] ?></td>
 					<td><?php echo $row['Number_of_pages'] ?></td>
-					<td><?php echo $row['Rented'] ?></td>
 					<td><?php echo $row['Number_of_copies'] ?></td>
 				</tr>
 		<?php
 			}
 			echo "</table>";
 		}
-	}
+	}	
 }
 ?> 
 <br>
 </div>
-
-
-
 </body>
 </html>

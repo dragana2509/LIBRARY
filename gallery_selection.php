@@ -37,7 +37,7 @@ require_once("user_menu.php");
 				<?php echo $u->Author;?>
 			</td>
 			<td>
-				<?php echo $u->Publisher;?>
+				<?php echo $u->Publisher_id;?>
 			</td>
 			<td>
 				<?php echo $u->Published_on;?>

@@ -9,7 +9,9 @@
 	session_start();
 	require_once("conn.php");
 
-	if(isset($_SESSION['id'])) {
+	if(!isset($_SESSION['id']) || $_SESSION['username'] != "admin"){
+		header('Location:index.php');
+	}
 	
 ?>
 	<a href="admin.php?action=add_books">ADD BOOKS INTO LIBRARY</a> | 
@@ -20,41 +22,13 @@
 	<a href="logout.php">LOG OUT</a> 
 	<hr>
 <?php
-	if(isset($_GET['action'])){
-		$file = $_GET['action'] .".php";
-		if(file_exists($file)){
-			include_once ($file);
-		} else{
-			echo "Page does not exist, please go back to <a href= 'index.php'>HOME PAGE</a>";
-		}
-	} else{
-			
-			
-		}
-	} else {
-		// sesija ne postoji, za goste sajta, ne prijavljene 
-?>
-		<a href="index.php">HOME</a> |
-		<a href="index.php?action=registar">REGISTRATION</a> |
-		<a href="index.php?action=login">LOG IN</a><hr>
-<?php
-	if(isset($_GET['action'])){
-		$file = $_GET['action'] .".php";	
+		if(isset($_GET['action'])){
+			$file = $_GET['action'] .".php";
 			if(file_exists($file)){
 				include_once ($file);
 			} else{
-				echo "Page does not exist, please go back to <a href= 'home.php'>HOME PAGE</a>";
+				echo "Page does not exist, please go back to <a href= 'index.php'>HOME PAGE</a>";
 			}
-		} else{
-			include_once("login.php");
-			include_once("register.php");
-		}
-	}
-	$connection = "conn.php";
-	if(file_exists($connection)){
-		include_once($connection);
-	} else{
-		die("Fatal error, please contact ADMIN!");
-	}
+		} 
 	require_once("recommended.php");
 ?>

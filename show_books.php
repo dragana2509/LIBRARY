@@ -14,7 +14,6 @@
 				<th>PUBLISHED ON</th>
 				<th>GENRE</th>
 				<th>ISBN</th>
-				<th>RENTED</th>
 				<th>NUMBER OF COPIES</th>
 			</tr>
 		<?php
@@ -31,7 +30,7 @@
 					<?php echo $book->Author;?>
 				</td>
 				<td>
-					<?php echo $book->Publisher;?>
+					<?php echo $book->Publisher_id;?>
 				</td>
 				<td>
 					<?php echo $book->Published_on;?>
@@ -42,9 +41,6 @@
 				<td>
 					<?php echo $book->ISBN;?>
 				</td>		
-				<td>
-					<?php echo $book->Rented;?>
-				</td>
 				<td>
 					<?php echo $book->Number_of_copies;?>
 				</td>

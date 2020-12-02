@@ -7,23 +7,28 @@
 <hr>
 <?php
 	$id_edit = $_GET['id'];
-	$query = "SELECT * FROM `users`  WHERE `id` = $id_edit";
-	$user = $conn->query($query);
-	$row = $user->fetchAll(PDO::FETCH_OBJ);
-	
-		foreach ($row as $u){
-	 		$id = $u->id;
-			$username = $u->username;
-			$password = $u->password;
-			$name = $u->Name;
-			$surname = $u->Surname;
-			$email = $u->eMail;
-		}
+	$query = "SELECT * FROM `users` WHERE `id` = :id";
+	$user = $conn->prepare($query);
+	$user->execute([
+		":id"=>$id_edit,
+	]);	
+	$u = $user->fetch(PDO::FETCH_OBJ);
+		$username = $u->username;
+
+		$queryUs = "SELECT user_id, number_rented_books FROM rent WHERE user_id=:user_id";
+		$stmt = $conn->prepare($queryUs);
+		$stmt->execute([
+			":user_id"=>$id_edit
+		]);
+		$row = $stmt->fetch(PDO::FETCH_OBJ);
+			
 			if(isset($_POST['delete'])) {
 				if($username == "admin"){
 					echo "You can not delete admin! <br>";
+				}elseif(!empty($row)){
+						echo "You can not delete this user! <br>";
 				}else{
-					$query = " DELETE FROM `users`  WHERE id =$id_edit";
+					$query = "DELETE FROM `users` WHERE id = $id_edit";
 					$result = $conn->prepare($query);
 					$result->execute(array(":id"=>$id_edit));
 				?>
@@ -31,7 +36,7 @@
 				 <?php
 				 die();
 				}
-			} elseif(isset($_POST['cancel'])) {
+			}elseif(isset($_POST['cancel'])) {
 			 	?>
 				 	<meta http-equiv="refresh" content="0;url='admin.php?action=show_user_admin'"/>
 			<?php

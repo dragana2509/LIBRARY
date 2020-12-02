@@ -4,75 +4,56 @@
 ?>
 <hr>
 <?php
-	$q = "SELECT id, Title, Rented, Number_of_copies FROM books ";
-	$stmt=$conn->prepare($q);
-	$stmt->execute();
-	$books = $stmt->fetchAll();
-	
-    if(isset($_POST['submit'])){
+	if(isset($_POST['submit'])){
     	$id_book = $_POST['cbx_books'];
-		$q = "SELECT id, Title,Publisher, Rented, Number_of_copies FROM books WHERE id=$id_book";
-		$stmt=$conn->prepare($q);
-		$stmt->execute();
-		$books_table = $stmt->fetchAll(PDO::FETCH_OBJ);
-	 	$numberBooksForReturn = $_POST['number_books'];
+		$numberBooksForReturn = $_POST['number_books'];
+		$query = "SELECT number_rented_books FROM rent WHERE book_id=:book_id AND user_id=:user_id";
+		$statement = $conn->prepare($query);
+		$statement->execute([
+			":book_id"=>$id_book,
+			":user_id"=>$id_user,
+		]);
+		$resultRentedBooks = $statement->fetch(PDO::FETCH_OBJ);
 
-		foreach ($books_table as $p) {
-		 	$number_of_copies = $p->Number_of_copies;
-		 	$rented = $p->Rented;
-		 	$title = $p->Title;
-		 	$publisher = $p->Publisher;
-		}	
-		if($numberBooksForReturn > $rented){
-			echo "You can't return more books than you rented!";
-		}  else{
-				$q1 = "UPDATE books
-							SET `Rented` =:rented,
-							    `Number_of_copies` =:number_of_copies
-							WHERE id = $id_book"; 
-				$parameters =[
-					':rented'=>($rented - $numberBooksForReturn),
-					':number_of_copies'=>($number_of_copies + $numberBooksForReturn)
+		if($resultRentedBooks == false){
+			echo "You have not rented this book!";
+		} else{
+			$currentlyRented = $resultRentedBooks->number_rented_books;
+
+			if($numberBooksForReturn > $currentlyRented){
+				echo "You can not return more books than you rented!";
+			} elseif($numberBooksForReturn < $currentlyRented){
+				$qRent = "UPDATE rent
+								SET `number_rented_books` =:number_rented_books
+								WHERE user_id =:user_id
+								AND book_id =:book_id"; 
+				$params = [
+					':number_rented_books'=>($currentlyRented - $numberBooksForReturn),
+					':user_id'=>$id_user,
+					':book_id'=>$id_book,
 				];
-				$statement = $conn->prepare($q1);
-				$statement->execute($parameters);
-			}		
-		
-		$q2 = "SELECT id, Book_title ,Publisher, Rented FROM users WHERE id=$id_user";
-		$stmt1=$conn->prepare($q2);
-		$stmt1->execute();
-		$user1 = $stmt1->fetchAll(PDO::FETCH_OBJ);
-		foreach ($user1 as $u){ 	
-		 	$rented = $u->Rented;
-		}
-		if($numberBooksForReturn < $rented){
-				$q3 = " UPDATE users
-									SET `Rented` =:rented	
-									WHERE id = $id_user"; 
-				$parameters1 =[
-					':rented' => ($rented - $numberBooksForReturn)
+				$stmt = $conn->prepare($qRent);
+				$stmt->execute($params);
+				echo "Thank you, you have " . ($currentlyRented - $numberBooksForReturn) . " more book(s) to return!";
+			} else{
+				$qRent = "DELETE FROM rent
+								WHERE user_id =:user_id
+								AND book_id =:book_id"; 
+				$params =[
+					':user_id'=>$id_user,
+					':book_id'=>$id_book,
 				];
-				$statement1 = $conn->prepare($q3);
-				$statement1->execute($parameters1);
-		} elseif ($numberBooksForReturn == $rented) {
-			echo "Thank you for returning all books!";
-				$book_title ="";
-				$publisher ="";
-				$q4 = " UPDATE users
-									SET `Rented` =:rented,
-									    `Book_title` =:book_title,
-									    `Publisher` =:publisher
-									WHERE id = $id_user"; 
-				$parameters2 =[	
-					':rented'=>($rented - $numberBooksForReturn),
-					':book_title'=>$book_title,
-					':publisher'=>$publisher
-				];
-				$statement2 = $conn->prepare($q4);
-				$statement2->execute($parameters2);
-		} 
-	}		
-// da se promeni action na formi, novi fajl za submit logiku, posle submit header location na home.php action=return
+				$stmt = $conn->prepare($qRent);
+				$stmt->execute($params);
+				echo "Thank you for returning all books!";
+
+			} 
+		}		
+	}	
+	$qBook = "SELECT id, Title FROM books ";
+	$stmtBook = $conn->prepare($qBook);
+	$stmtBook->execute();
+	$books = $stmtBook->fetchAll();	
 ?>
 <center><h3>RETURN A BOOK</h3></center>
 <form method="POST" action="home.php?action=return" enctype="multipart/form-data"> 

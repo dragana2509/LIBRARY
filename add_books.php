@@ -2,13 +2,14 @@
 <?php
 	require_once("header.php");
 
-		$statement=$conn->prepare("SELECT id_publisher, Publisher FROM publisher ");
+		$statement = $conn->prepare("SELECT id_publisher, Publisher FROM publisher ");
 		$statement->execute();
 		$publishers = $statement->fetchAll();
 
 	$err = "";
 	if(isset($_POST['submit_add'])){
-		$option_publisher=$_POST['cbx_publisher'];
+		$publisher_id=$_POST['cbx_publisher'];
+		
 
 		if(!empty($_POST['title'])){
 			$title = "SELECT * FROM `books` WHERE `Title`= :title";
@@ -105,7 +106,7 @@
 					$query = "INSERT INTO `books` 
 							SET `Title`=:title,
 							 `Author` =:author,
-							 `Publisher` = :publisher,
+							 `Publisher_id` = :publisher,
 							 `Published_on`=:published_on,
 							 `Genre`=:genre,
 							 `ISBN`=:isbn,
@@ -117,7 +118,7 @@
 					$u->execute(array(
 							':title'=>$title,
 							':author'=>$author,
-							':publisher'=>$option_publisher,
+							':publisher'=>$publisher_id,
 							':published_on'=>$published_on,
 							':genre'=>$genre,
 							':isbn'=>$isbn,
@@ -130,7 +131,7 @@
 					$query = "INSERT INTO `books` 
 							SET `Title`=:title,
 							 `Author`=:author,
-							 `Publisher`=:publisher,
+							 `Publisher_id`=:publisher,
 							 `Published_on`=:published_on,
 							 `Genre`=:genre,
 							 `ISBN`=:isbn,
@@ -142,7 +143,7 @@
 					$u->execute(array(
                             ':title'=>$title,
                             ':author'=>$author,
-                            ':publisher'=>$option_publisher,
+                            ':publisher'=>$publisher_id,
                             ':published_on'=>$published_on,
                             ':genre'=>$genre,
                             ':isbn'=>$isbn,
@@ -186,7 +187,7 @@
 				<select id="cbx_publisher" name="cbx_publisher">
 				<option value="0">Choose the publisher</option>
 				<?php foreach ($publishers as $publisher){ ?>
-					<option value="<?php echo $publisher['Publisher']; ?>"><?php echo $publisher['Publisher']; ?></option>
+					<option value="<?php echo $publisher['id_publisher']; ?>"><?php echo $publisher['Publisher']; ?></option>
 				<?php } ?>
 				</select>
 			</td>
@@ -196,7 +197,7 @@
 				Published on:
 			</td>
 			<td>
-				<input type="text" name="published_on"/>
+				<input type="date" name="published_on"/>
 			</td>
 		</tr>
 		<tr>

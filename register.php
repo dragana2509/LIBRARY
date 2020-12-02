@@ -1,7 +1,6 @@
 <?php
 	$err = "";
 	if(isset($_POST['submit_reg'])){
-		
 		if(!empty($_POST['username'])){
 			$UserName = "SELECT * FROM `users` WHERE `username`= :username";
 			$users= $conn->prepare($UserName);

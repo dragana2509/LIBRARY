@@ -2,7 +2,11 @@
 	session_start();
 	require_once("conn.php");
 	require_once("header.php");
-	?>
+	if(!isset($_SESSION['username']) || $_SESSION['username'] == 'admin') {
+		header('Location:index.php');
+	}
+?>
+
 	<div class="container">
 			<div class="row">
 				<div class="col-md-12" style="margin-bottom: 10px;">
