@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 02, 2020 at 05:41 PM
+-- Generation Time: Dec 02, 2020 at 05:54 PM
 -- Server version: 10.1.29-MariaDB
 -- PHP Version: 7.1.12
 
@@ -46,16 +46,16 @@ CREATE TABLE `books` (
 --
 
 INSERT INTO `books` (`id`, `Title`, `Author`, `Publisher_id`, `Published_on`, `Genre`, `ISBN`, `Number_of_pages`, `Number_of_copies`, `Avatar`) VALUES
-(1, 'Genetics', 'Benjamin A. Pierce', 1, '15.05.2005.', 'Medicine', 7888, '1450', '20', 'Pictures_add_books/genetics.jpg'),
-(2, 'Anatomy', 'Frank H. Netter', 1, '02.02.2002.', 'Medicine', 4555, '1300', '20', 'Pictures_add_books/anatomy.jpg'),
-(3, 'Telecommunications', 'Fraidoon Mazda ', 2, '25.06.2010.', 'Technology', 9669, '864', '15', 'Pictures_add_books/telecom.jpg'),
-(4, 'Chemical Engeneering', 'S. Pushpavanam', 1, '07.09.2017.', 'Technology', 144, '2500', '15', 'Pictures_add_books/engen.jpg'),
-(5, 'The art of Rivalry', 'Sebastian Smee', 2, '01.02.2016.', 'Art', 1222, '550', '20', 'Pictures_add_books/art.jpg'),
-(6, 'Everything you know about art is wrong', 'Matt Brown', 1, '05.07.2018.', 'Art', 2563, '700', '10', 'Pictures_add_books/art1.jpg'),
-(7, 'World history', 'Adam Brown', 1, '11.1.2001.', 'History', 7899, '845', '25', 'Pictures_add_books/worldh.jpg'),
-(8, 'The great influenza', 'John M. Barry', 2, '15.09.2005.', 'History', 1254, '1230', '30', 'Pictures_add_books/infl.jpg'),
-(9, 'The book of lost friends', 'Lisa Wingate', 1, '12.02.2012.', 'Novel', 4565, '355', '20', 'Pictures_add_books/friends.jpg'),
-(10, 'Can love happen twice', 'Ravinder Singh', 1, '03.06.20015.', 'Novel', 2112, '410', '15', 'Pictures_add_books/love.jpg');
+(1, 'Genetics', 'Benjamin A. Pierce', 1, '2005-05-15', 'Medicine', 7888, '1450', '20', 'Pictures_add_books/genetics.jpg'),
+(2, 'Anatomy', 'Frank H. Netter', 1, '2002-01-22', 'Medicine', 4555, '1300', '20', 'Pictures_add_books/anatomy.jpg'),
+(3, 'Telecommunications', 'Fraidoon Mazda ', 2, '2010-06-25', 'Technology', 9669, '864', '15', 'Pictures_add_books/telecom.jpg'),
+(4, 'Chemical Engeneering', 'S. Pushpavanam', 1, '2017-09-07', 'Technology', 144, '2500', '15', 'Pictures_add_books/engen.jpg'),
+(5, 'The art of Rivalry', 'Sebastian Smee', 2, '2016-01-02', 'Art', 1222, '550', '20', 'Pictures_add_books/art.jpg'),
+(6, 'Everything you know about art is wrong', 'Matt Brown', 1, '2018-11-30', 'Art', 2563, '700', '10', 'Pictures_add_books/art1.jpg'),
+(7, 'World history', 'Adam Brown', 1, '2001-01-11', 'History', 7899, '845', '25', 'Pictures_add_books/worldh.jpg'),
+(8, 'The great influenza', 'John M. Barry', 2, '2005-03-13', 'History', 1254, '1230', '30', 'Pictures_add_books/infl.jpg'),
+(9, 'The book of lost friends', 'Lisa Wingate', 1, '2012-02-12', 'Novel', 4565, '355', '20', 'Pictures_add_books/friends.jpg'),
+(10, 'Can love happen twice', 'Ravinder Singh', 1, '2015-06-12', 'Novel', 2112, '410', '15', 'Pictures_add_books/love.jpg');
 
 -- --------------------------------------------------------
 
@@ -157,7 +157,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `books`
 --
 ALTER TABLE `books`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `publisher`
